@@ -1,0 +1,71 @@
+<html>
+  <head>
+    <title>sso.js测试</title>
+    <script src="../sso.js"></script>
+    <script>   
+      function getQuery (name) {
+        if (name) {
+          var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)')
+          var r = window.location.search.substr(1).match(reg)
+          if (r != null) {
+            return unescape(r[2])
+          }
+          return null
+        }
+      }     
+      var sso = new SSO({
+        appId:'efa952dbd5c64eceb0e62db923079760',
+        baseUrl:'http://10.1.33.5:8099'
+      });
+
+      window.onload = ()=>{
+        window.alert("code方式请求回调");
+        //是否有access_token
+       
+        var state = getQuery("state"); //用于验证回调的安全性，需要和authorize时的state比对
+        if(window.localStorage.getItem("state")!=state) {
+          window.alert("回调不合法！");
+          return;
+        }
+        var code = getQuery("code");        
+        sso.token(code,(result)=>{
+          if(result.code==1){
+            var access_token = result.access_token; //令牌
+            //令牌要存起来，放在前端或者后端
+            window.localStorage.setItem('sso_access_token', access_token);  
+
+            var refresh_token = result.refresh_token; //刷新令牌
+            var expires_in = result.expires_in; //令牌效期（秒）
+            //刷新令牌用于维护令牌有效性，需要超期之前进行刷新（建议放在后端）
+            /*sso.refresh(refresh_token,(result)=>{
+              result.access_token; //令牌
+              result.refresh_token; //刷新令牌
+              result.expires_in; //令牌效期（秒）
+            });
+            */
+            getUser(access_token);
+          }else{
+            window.alert(result.error);
+          }
+        });        
+      }
+
+      function getUser(access_token) {
+        sso.getUser(access_token,(result)=>{
+          if(result.code==1){
+            var name = result.name //姓名
+            var employee_id = result.employee_id //员工ID
+            var login_type = result.login_type //登录方式         
+          }else{
+            window.alert(result.error);
+          }
+        })
+      }
+    </script>
+  </head> 
+
+  <body>
+    <textarea id="log" rows="15" style="width:500px;font-size:20px">
+    </textarea>
+  </body>
+</html>

@@ -1,0 +1,79 @@
+<html>
+  <head>
+    <title>sso.js测试</title>
+    <script src="sso.js"></script>
+    <script>
+      
+      function guid(showLine) {
+        var guid = '';
+        for (var i = 1; i <= 32; i++) {
+          var n = Math.floor(Math.random() * 16.0).toString(16);
+          guid += n;
+          if (showLine) {
+            if (i == 8 || i == 12 || i == 16 || i == 20) {
+              guid += '-';
+            }
+          }
+        }
+        return guid;
+      }
+
+      var sso = new SSO({
+        appId:'efa952dbd5c64eceb0e62db923079760',
+        baseUrl:'http://10.1.33.5:8099',
+        redirectUrl:'http://127.0.0.1:8888/redirect.html'
+      });
+
+      window.onload = ()=>{
+        window.alert("开始执行");
+        //是否有access_token
+        var access_token = window.localStorage.getItem("access_token");
+        if(access_token){
+          sso.getUser(access_token,(result)=>{
+            if(result.code==1){
+              var name = result.name //姓名
+              var employee_id = result.employee_id //员工ID
+              var login_type = result.login_type //登录方式 
+              
+              /*退出登录
+              var redirect_uri = window.location.href;
+              sso.redirect_uri(
+                access_token,
+                redirect_uri 
+              ); 
+              */ 
+            }else{
+              window.alert(result.error);
+              ssoRequest();
+            }
+          })
+        }else{
+          ssoRequest();
+        }               
+      }
+
+      function ssoRequest(access_token,redirect_uri) {
+        var id = guid();
+        window.localStorage.setItem('sso_state', id);   
+        sso.authorize({
+          state:id,
+          response_type:'code' //code或者token，token方式，redirectUrl使用redirect2.html
+        });  
+      }
+
+      function ssoLogout() {
+        var id = guid();
+        window.localStorage.setItem('sso_state', id);   
+        sso.logout({
+          state:id,
+          response_type:'code' //code或者token，token方式，redirectUrl使用redirect2.html
+        });  
+      }
+    </script>
+  </head> 
+
+  <body>
+    <textarea id="log" rows="15" style="width:500px;font-size:20px">
+    </textarea>
+  </body>
+</html>
