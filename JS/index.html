@@ -20,7 +20,7 @@
 
       var sso = new SSO({
         appId:'efa952dbd5c64eceb0e62db923079760',
-        baseUrl:'http://10.1.33.5:8099',
+        baseUrl:'http://localhost:8005',
         redirectUrl:'http://127.0.0.1:8888/redirect.html'
       });
 
@@ -34,6 +34,10 @@
               var name = result.name //姓名
               var employee_id = result.employee_id //员工ID
               var login_type = result.login_type //登录方式 
+              if(result.ext){
+                var user_name = result.ext.user_name //工号 
+                var job = result.ext.job 
+              }              
               
               /*退出登录
               var redirect_uri = window.location.href;

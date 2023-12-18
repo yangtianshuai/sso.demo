@@ -41,7 +41,7 @@ namespace sso.test
                     if (sso.HeatBeat(access_token))
                     {
                         //登录退出
-                        access_token = sso.GetToken();                        
+                        access_token = sso.Token();                        
                     }
                     else
                     {
