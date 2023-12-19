@@ -1,5 +1,6 @@
 <html>
   <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
     <title>sso.js测试</title>
     <script src="sso.js"></script>
     <script>
@@ -19,58 +20,26 @@
       }
 
       var sso = new SSO({
-        appId:'efa952dbd5c64eceb0e62db923079760',
-        baseUrl:'http://localhost:8005',
-        redirectUrl:'http://127.0.0.1:8888/redirect.html'
+        appId:'efa952dbd5c64eceb0e62db923079760', //应用ID
+        baseUrl:'http://10.1.33.5:8990', //SSO服务器BaseURL(此处是测试环境)
+        redirectUrl:'http://127.0.0.1:8888/redirect.html'//本应用回调地址
       });
 
       window.onload = ()=>{
         window.alert("开始执行");
-        //是否有access_token
-        var access_token = window.localStorage.getItem("access_token");
-        if(access_token){
-          sso.getUser(access_token,(result)=>{
-            if(result.code==1){
-              var name = result.name //姓名
-              var employee_id = result.employee_id //员工ID
-              var login_type = result.login_type //登录方式 
-              if(result.ext){
-                var user_name = result.ext.user_name //工号 
-                var job = result.ext.job 
-              }              
-              
-              /*退出登录
-              var redirect_uri = window.location.href;
-              sso.redirect_uri(
-                access_token,
-                redirect_uri 
-              ); 
-              */ 
-            }else{
-              window.alert(result.error);
-              ssoRequest();
-            }
-          })
-        }else{
-          ssoRequest();
-        }               
-      }
-
-      function ssoRequest(access_token,redirect_uri) {
         var id = guid();
         window.localStorage.setItem('sso_state', id);   
         sso.authorize({
           state:id,
           response_type:'code' //code或者token，token方式，redirectUrl使用redirect2.html
-        });  
+        });      
       }
-
-      function ssoLogout() {
-        var id = guid();
-        window.localStorage.setItem('sso_state', id);   
+            
+      function ssoLogout() {        
+        var access_token = window.localStorage.getItem('access_token');   
         sso.logout({
-          state:id,
-          response_type:'code' //code或者token，token方式，redirectUrl使用redirect2.html
+          access_token:id,
+          redirect_uri:window.location.href //退出登录后跳转的地址
         });  
       }
     </script>

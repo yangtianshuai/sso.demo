@@ -1,5 +1,6 @@
 <html>
   <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
     <title>sso.js测试</title>
     <script src="sso.js"></script>
     <script>   
@@ -14,8 +15,8 @@
         }
       }     
       var sso = new SSO({
-        appId:'efa952dbd5c64eceb0e62db923079760',
-        baseUrl:'http://10.1.33.5:8099'
+        appId:'efa952dbd5c64eceb0e62db923079760', //应用ID
+        baseUrl:'http://10.1.33.5:8990', //SSO服务器BaseURL(此处是测试环境)
       });
 
       window.onload = ()=>{
@@ -23,7 +24,7 @@
         //是否有access_token
        
         var state = getQuery("state"); //用于验证回调的安全性，需要和authorize时的state比对
-        if(window.localStorage.getItem("state")!=state) {
+        if(window.localStorage.getItem("sso_state")!=state) {
           window.alert("回调不合法！");
           return;
         }

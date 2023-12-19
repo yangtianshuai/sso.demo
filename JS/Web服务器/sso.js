@@ -50,7 +50,7 @@ var SSO = function (ops) {
   this.token = function (code, callback) {
     var url = this.config.api('oauth2/token');
     url += '?grant_type=authorization_code&code=' + code;
-    ajax.get(api, (result) => {
+    ajax.get(url, (result) => {
       if (callback) callback(result);
     });
   };
@@ -58,7 +58,7 @@ var SSO = function (ops) {
   this.refresh = function (refresh_token, callback) {
     var url = this.config.api('oauth2/token');
     url += '?grant_type=refresh_token&refresh_token=' + refresh_token;
-    ajax.get(api, (result) => {
+    ajax.get(url, (result) => {
       if (callback) callback(result);
     });
   };
@@ -72,7 +72,7 @@ var SSO = function (ops) {
       access_token +
       '&path=' +
       ops.logoutUrl;
-    ajax.get(api, (result) => {
+    ajax.get(url, (result) => {
       if (callback) callback(result);
     });
   };
@@ -88,6 +88,23 @@ var SSO = function (ops) {
     window.location.href = url;
   };
 };
+
+function beforeReturn(option) {
+  if (option.xhr.readyState == 4) {
+    var result = {};
+    if (option.xhr.status == 200) {
+      result = JSON.parse(option.xhr.responseText);
+    } else {
+      result.code = 0;
+      if (option.xhr.responseText.length > 0) {
+        result.error = option.xhr.responseText;
+      } else {
+        result.error = '调用失败';
+      }
+    }
+    option.callback(result);
+  }
+}
 
 //封装get和post请求
 var ajax = {
