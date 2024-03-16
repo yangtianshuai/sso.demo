@@ -26,3 +26,4 @@ bld/
 node_modules/
 appsettings.json
 api/DevOps.Api/internal-nlog.txt
+PB/sso.tlb
