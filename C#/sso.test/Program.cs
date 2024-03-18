@@ -56,7 +56,9 @@ namespace sso.test
             }
 
             //获取SSO用户信息
-            var user = sso.GetUser(access_token);            
+            var user = sso.GetUser(access_token);
+
+            //sso.Logout();
 
             int seconds = 60;
             //定时检测登录是否失效
