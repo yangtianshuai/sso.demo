@@ -1,4 +1,6 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace sso.test
 {
@@ -9,6 +11,9 @@ namespace sso.test
         public static sso.OAuth2 sso = null;
 
         public static sso.SsoUser user = null;
+      
+        public delegate void Logout();
+        public static Logout LogoutCallBack;
 
         private static int _seconds = 60;
 
@@ -27,8 +32,7 @@ namespace sso.test
                 {
                     Thread.Sleep(1000 * _seconds);
                     if (sso.HeatBeat(access_token))
-                    {
-                        //登录退出
+                    {                        
                         access_token = sso.Token();
                     }
                     else
@@ -38,8 +42,14 @@ namespace sso.test
                     if (string.IsNullOrEmpty(access_token))
                     {
                         access_token = sso.GetToken("", "", "");
+                        //心跳结束，系统票据已经耗尽，需要提示用户
+                        if (string.IsNullOrEmpty(access_token))
+                        {
+                            LogoutCallBack?.Invoke();
+                        }
                     }
-                }
+                }                
+
             });
             thread.IsBackground = true;
             thread.Start();

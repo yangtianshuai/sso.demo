@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 
 namespace sso.test
 {
@@ -26,6 +27,17 @@ namespace sso.test
         {
             if (!string.IsNullOrEmpty(SsoHost.access_token))
             {
+                SsoHost.LogoutCallBack = () =>
+                {
+                    var res = MessageBox.Show("登录票据已过期，是否重新登录", "安全提示", MessageBoxButtons.YesNo);
+                    if(res == DialogResult.Yes)
+                    {
+                        this.Invoke((EventHandler)delegate
+                        {
+                            this.Close();
+                        });                        
+                    }
+                };
                 //获取SSO用户信息
                 SsoHost.user = SsoHost.sso.GetUser();                
             }

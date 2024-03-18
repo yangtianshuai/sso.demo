@@ -34,8 +34,7 @@ namespace sso.test
                 //可能由于本地插件未注册，导致无法连接
                 SsoHost.access_token = null;
             }
-
-            SsoHost.Run();
+           
             if (!string.IsNullOrEmpty(SsoHost.access_token))
             {
                 Program.IsLogin = true;
@@ -47,6 +46,7 @@ namespace sso.test
 
             if (IsLogin)
             {
+                SsoHost.Run();
                 Application.Run(new FrmMain());
             }           
 
